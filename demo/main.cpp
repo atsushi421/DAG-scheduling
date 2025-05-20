@@ -4,7 +4,8 @@
 #include "dagSched/tests.h"
 #include "dagSched/plot_utils.h"
 
-#include <ctime>    
+#include <ctime>
+#include <cassert>
 
 int main(int argc, char **argv){
 
@@ -19,11 +20,14 @@ int main(int argc, char **argv){
     if(argc > 2)
         taskset_filename = argv[2];
         
-
     int n_proc = 4;
+    if(argc > 3)
+        n_proc = std::atoi(argv[3]);
+
     std::vector<int> typed_proc = {4,4};
     dagSched::Taskset taskset;
     if(random_creation){
+        assert(false);
         int n_tasks = 4;
         float U_tot = 1;
         dagSched::GeneratorParams gp;
@@ -39,46 +43,47 @@ int main(int argc, char **argv){
             taskset.readTasksetFromDOT(taskset_filename);
     }
 
+    // Worst fit is the best method.
     std::cout<<"Assignment: "<< dagSched::WorstFitProcessorsAssignment(taskset, n_proc)<<std::endl;
     
-    std::string dot_command = "";
-    for(int i=0; i<taskset.tasks.size();++i){
-        std::cout<<taskset.tasks[i]<<std::endl;
-        taskset.tasks[i].saveAsDot("test"+std::to_string(i)+".dot");
+    // std::string dot_command = "";
+    // for(int i=0; i<taskset.tasks.size();++i){
+    //     std::cout<<taskset.tasks[i]<<std::endl;
+    //     taskset.tasks[i].saveAsDot("test"+std::to_string(i)+".dot");
 
-        //convert dot to png to visualize it
-        dot_command = "dot -Tpng test"+std::to_string(i)+".dot > test"+std::to_string(i)+".png";
-        system(dot_command.c_str());
-    }
+    //     //convert dot to png to visualize it
+    //     dot_command = "dot -Tpng test"+std::to_string(i)+".dot > test"+std::to_string(i)+".png";
+    //     system(dot_command.c_str());
+    // }
     std::cout<<"Taskset utilization: "<<taskset.getUtilization()<<std::endl;
-    std::cout<<"Taskset Hyper-Period: "<<taskset.getHyperPeriod()<<std::endl;
-    std::cout<<"Taskset max Density: "<<taskset.getMaxDensity()<<std::endl<<std::endl;
+    // std::cout<<"Taskset Hyper-Period: "<<taskset.getHyperPeriod()<<std::endl;
+    // std::cout<<"Taskset max Density: "<<taskset.getMaxDensity()<<std::endl<<std::endl;
 
     //single DAG tests
-    std::cout<<"Single task tests: \n";
+    // std::cout<<"Single task tests: \n";
     bool constrained_taskset = true;
     bool implicit_taskset = true;
-    for(int i=0; i<taskset.tasks.size();++i){
-        std::cout<<"\tTask "<<i<<std::endl;
-        //constrained
-        if(taskset.tasks[i].getDeadline() < taskset.tasks[i].getPeriod()){
-            std::cout<< "\t\tBaruah 2012 constrained (GP-FP-EDF): " <<dagSched::GP_FP_EDF_Baruah2012_C(taskset.tasks[i], n_proc)<<std::endl;
-            implicit_taskset = false;
-        }
+    // for(int i=0; i<taskset.tasks.size();++i){
+    //     std::cout<<"\tTask "<<i<<std::endl;
+    //     //constrained
+    //     if(taskset.tasks[i].getDeadline() < taskset.tasks[i].getPeriod()){
+    //         std::cout<< "\t\tBaruah 2012 constrained (GP-FP-EDF): " <<dagSched::GP_FP_EDF_Baruah2012_C(taskset.tasks[i], n_proc)<<std::endl;
+    //         implicit_taskset = false;
+    //     }
 
-        if(taskset.tasks[i].getDeadline() <= taskset.tasks[i].getPeriod()){
-            std::cout<< "\t\tHan 2019 constrained typed(GP-FP): " <<dagSched::GP_FP_Han2019_C_1(taskset.tasks[i], typed_proc)<<std::endl;
-            std::cout<< "\t\tHe 2019 constrained typed(GP-FP): " <<dagSched::GP_FP_He2019_C(taskset.tasks[i], n_proc)<<std::endl;
-        }
-        std::cout<< "\t\tBaruah 2012 arbitrary (GP-FP-EDF): "   <<dagSched::GP_FP_EDF_Baruah2012_A(taskset.tasks[i], n_proc)<<std::endl;
-        std::cout<< "\t\tGraham 1969 : "   <<dagSched::Graham1969(taskset.tasks[i], n_proc)<<std::endl;
+    //     if(taskset.tasks[i].getDeadline() <= taskset.tasks[i].getPeriod()){
+    //         std::cout<< "\t\tHan 2019 constrained typed(GP-FP): " <<dagSched::GP_FP_Han2019_C_1(taskset.tasks[i], typed_proc)<<std::endl;
+    //         std::cout<< "\t\tHe 2019 constrained typed(GP-FP): " <<dagSched::GP_FP_He2019_C(taskset.tasks[i], n_proc)<<std::endl;
+    //     }
+    //     std::cout<< "\t\tBaruah 2012 arbitrary (GP-FP-EDF): "   <<dagSched::GP_FP_EDF_Baruah2012_A(taskset.tasks[i], n_proc)<<std::endl;
+    //     std::cout<< "\t\tGraham 1969 : "   <<dagSched::Graham1969(taskset.tasks[i], n_proc)<<std::endl;
 
-        if(taskset.tasks[i].getDeadline() > taskset.tasks[i].getPeriod()){
-            constrained_taskset = false;
-            implicit_taskset = false;
-        }
+    //     if(taskset.tasks[i].getDeadline() > taskset.tasks[i].getPeriod()){
+    //         constrained_taskset = false;
+    //         implicit_taskset = false;
+    //     }
         
-    }
+    // }
 
     //taskset tests
     std::cout<<"Taskset tests: \n";
