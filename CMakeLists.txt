@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 project(dag-sched CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC -Wno-deprecated-declarations -Wno-unused-variable")
+set(TBB_LIBRARY ${TBB_LIBRARY} CACHE STRING "Path to libtbb.so for submodules")
+set(TBB_INCLUDE_DIR ${TBB_INCLUDE_DIR} CACHE STRING "Path to TBB headers")
+
 
 #-------------------------------------------------------------------------------
 # Options
@@ -43,14 +46,15 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include matplotlib-cpp 
                     ${CMAKE_CURRENT_SOURCE_DIR}/np-schedulability-analysis/include 
-                    ${Python3_INCLUDE_DIRS})
+                    ${Python3_INCLUDE_DIRS}
+                    ${TBB_INCLUDE_DIR})
 
 file(GLOB dag-sched-SRC "src/*/*.cpp" "src/*.cpp")
 
 if(WITH_ZAHAF)
-    set(dag-sched-LIBS yaml-cpp ${Python3_LIBRARIES} tbb rt_compiler)
+    set(dag-sched-LIBS yaml-cpp ${Python3_LIBRARIES} ${TBB_LIBRARY} rt_compiler)
 else()
-    set(dag-sched-LIBS yaml-cpp ${Python3_LIBRARIES} tbb)
+    set(dag-sched-LIBS yaml-cpp ${Python3_LIBRARIES} ${TBB_LIBRARY})
 endif()
 
 add_library(dag-sched SHARED ${dag-sched-SRC})
