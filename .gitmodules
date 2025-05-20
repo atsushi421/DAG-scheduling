@@ -4,3 +4,6 @@
 [submodule "matplotlib-cpp"]
 	path = matplotlib-cpp
 	url = https://github.com/mive93/matplotlib-cpp
+[submodule "oneTBB"]
+	path = oneTBB
+	url = https://github.com/uxlfoundation/oneTBB.git
