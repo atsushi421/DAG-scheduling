@@ -68,3 +68,6 @@ target_link_libraries(demo dag-sched)
 
 add_executable(eval demo/evaluate.cpp)
 target_link_libraries(eval dag-sched)
+
+add_executable(melani2015_only demo/melani2015_only.cpp)
+target_link_libraries(melani2015_only dag-sched)
